@@ -1,0 +1,39 @@
+#!/bin/bash
+
+
+journal() {
+	cd $JOURNAL_PATH
+
+	# Check if there is already a directory for the current year
+	year=$(date +"%Y")
+	if [ ! -d "$year" ]; then
+		  mkdir $year
+	fi
+
+	cd $year
+
+	# Check if there is already a subdirectory for the current month
+	month=$(date +"%B")
+	if [ ! -d $month ]; then
+		mkdir $month
+	fi
+
+	cd $month
+
+	# Manage daily files
+	daily_file=$(date +"%d-%b-%Y")
+	entry=$(date +"%A, %M  %B of %Y")
+	if [ ! -f "${daily_file}.md" ]; then
+		echo -ne "# $entry\n\n" > "${daily_file}.md"
+	fi
+
+	# New journal Entry
+	note_time=$(date +"%H:%M:%S")
+	echo -ne "## $note_time\n\n" > /tmp/journal_entry.md
+	vim -c 'startinsert' +2 /tmp/journal_entry.md
+
+	# Close up
+	echo -ne "\n" >> /tmp/journal_entry.md
+	cat /tmp/journal_entry.md >> "$daily_file".md
+}
+

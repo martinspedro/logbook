@@ -1,0 +1,90 @@
+#!/bin/bash
+#
+# functions to manage course notes
+#
+
+init-course () {
+	# Check if the course files exist
+	if [ ! -f $COURSES_FILE ]; then
+		touch $COURSES_FILE
+	fi
+	
+	# Get curricular unit name
+	course_name=$( basename "$(pwd)" )
+
+	# Check if there is already a Note directory
+	if [ -d "Notes" ]; then
+		echo -ne "${RED}ERROR!${NC} There is already a directory for notes in this folder. ${LRED}Aborted.${NC}\n"
+		exit 1
+	fi
+
+	# Create Notes directory structure
+	mkdir Notes
+	cd Notes
+	mkdir raw metadata pdf pictures
+	
+	# Introduce new directory to the available directory structure
+	notes_dir="$(pwd)"
+	echo -ne "$1 |$notes_dir\n" >> $COURSES_FILE
+
+	# Create .gitignore
+	echo -e "# Compressed files
+*.tar
+*.tar.bz2
+
+# Vim swap files
+*.swp
+*.swo
+
+# Tex compilation results
+*.aux
+*.log
+
+# Temporary hidden files from open files
+.fuse_hidden*" \
+> .gitignore
+	
+	# Create README
+	echo -e "$course_name Notes" > README.md
+
+	git init
+	git add raw metadata pdf pictures .gitignore README.md
+	git commit -m "First commit. Added basic directory structure."
+}
+
+course-new-raw-note () {
+	# Check if the courses list files exists and if the course is valid
+	if [ ! -f $COURSES_FILE ]; then
+		echo -e "${RED}ERROR!${NC} No course file found. ${LRED}Aborting.${NC}"
+		exit 1
+	elif  ! grep -w "$1" "$COURSES_FILE" ; then
+		echo -e "${RED}ERROR!${NC} The course is not listed in the course file. ${LRED}Aborting.${NC}"
+		exit 1
+	fi
+
+	# Get course path from courses list
+	course_path="$(grep -w $1 "$COURSES_FILE"	| cut -d\| -f2)"
+	cd "$course_path"
+
+
+	filename="\[\T]$(date +"%d-%m").md"
+
+	if [ -f $filename ]; then
+		vim "+ normal G $" raw/$filename
+	else
+		vim raw/"$filename"
+	fi
+
+	git add raw/"$filename"
+	git commit -m "[RAW] Notes for class on $(date +"%d %B")"
+}
+
+list-courses () {
+	# Check if the course files exist
+	if [ ! -f $COURSES_FILE ]; then
+		echo "${RED}ERROR!${NC} No course file found. ${LRED}Aborting.${NC}"
+		exit 1
+	fi
+
+	sed "s/|/stored\ in:\ /g" <<< cat $COURSE_FILE
+}

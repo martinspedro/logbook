@@ -1,0 +1,47 @@
+#!/bin/bash
+
+
+new-doc () {
+	# Check if the Document files exist
+	if [ ! -d $DOC_PATH ]; then
+		mkdir $DOC_PATH
+	fi
+	
+	if [ -f $DOC_PATH/$1.md ]; then
+		echo "ERROR. Document already exists. Aborting."
+		exit 1
+	fi
+	
+	# Create new document
+	touch $DOC_PATH/$1.md	
+}
+
+open-doc () {
+	# Check if the Document Path exist
+	if [ ! -d $DOC_PATH ]; then
+		echo "ERROR. The document path does not exist. Aborting."
+		exit 1
+	fi
+	
+	if [ -f $DOC_PATH/$1.md ]; then
+		cd $DOC_PATH	
+		vim "$1.md"
+	else
+		echo "ERROR. Document already exists. Aborting."
+		exit 1
+	fi
+}
+
+list-docs () {
+	# Check if the Document Path exist
+	if [ ! -d $DOC_PATH ]; then
+		echo "ERROR. The document path does not exist. Aborting."
+		exit 1
+	fi
+	
+	cd $DOC_PATH
+	documents=( $(ls *.md) )
+	for i in ${!documents[*]}; do
+		echo -ne "> ${documents[$i]}\n${CYAN}$(head -3 ${documents[$i]}) ${NC}\n\n" 
+	done
+}

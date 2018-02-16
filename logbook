@@ -46,7 +46,7 @@ source documents
 #-----------------------------------------------------------------------------#
 # SCRIPT AREA #
 #-----------------------------------------------------------------------------#
-if [ $# -ge 1 ] && [ $# -le 2 ]; then
+if [ $# -ge 1 ] && [ $# -le 3 ]; then
 	
 	current_path=$(pwd)
 	case $1 in
@@ -64,8 +64,8 @@ if [ $# -ge 1 ] && [ $# -le 2 ]; then
 		;;
 	
 		-c|--course)
-			if [ $# -eq 2 ]; then
-				course-new-raw-note $2
+			if [ $# -eq 3 ]; then
+				course-new-raw-note $2 $3
 			else
 				echo "USAGE: logbook -c|--course <course name>"
 				exit 1
@@ -118,10 +118,13 @@ options
 		shift # past argument
 		;;
 		esac
+
+
+	# Return to original path
+	cd "$current_path"
 else
 	echo "ERROR. No argumenst provided"
+	exit 1
 fi
 
-# Return to original path
-cd "$current_path"
 

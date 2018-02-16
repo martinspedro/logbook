@@ -57,19 +57,22 @@ course-new-raw-note () {
 	if [ ! -f $COURSES_FILE ]; then
 		echo -e "${RED}ERROR!${NC} No course file found. ${LRED}Aborting.${NC}"
 		exit 1
-	elif  ! grep -w "$1" "$COURSES_FILE" ; then
+	elif  ! grep -w "$2" "$COURSES_FILE" ; then
 		echo -e "${RED}ERROR!${NC} The course is not listed in the course file. ${LRED}Aborting.${NC}"
 		exit 1
 	fi
 
 	# Get course path from courses list
-	course_path="$(grep -w $1 "$COURSES_FILE"	| cut -d\| -f2)"
+	course_path="$(grep -w $2 "$COURSES_FILE"	| cut -d\| -f2)"
 	cd "$course_path"
+	
+	if [ $1 == "-t" ]; then
+		filename="[T]$(date +"%d-%m").md"
+	elif [ "$1" == "-p" ]; then
+		filename="[P]$(date +"%d-%m").md"
+	fi
 
-
-	filename="\[\T]$(date +"%d-%m").md"
-
-	if [ -f $filename ]; then
+	if [ ! -f "$filename" ]; then
 		vim "+ normal G $" raw/$filename
 	else
 		vim raw/"$filename"
@@ -86,5 +89,20 @@ list-courses () {
 		exit 1
 	fi
 
-	sed "s/|/stored\ in:\ /g" <<< cat $COURSE_FILE
+	sed "s/|/stored\ in:\ /g" <<< cat $COURSES_FILE
+}
+
+change-directory () {
+	# Check if the courses list files exists and if the course is valid
+	if [ ! -f $COURSES_FILE ]; then
+		echo -e "${RED}ERROR!${NC} No course file found. ${LRED}Aborting.${NC}"
+		exit 1
+	elif  ! grep -w "$2" "$COURSES_FILE" ; then
+		echo -e "${RED}ERROR!${NC} The course is not listed in the course file. ${LRED}Aborting.${NC}"
+		exit 1
+	fi
+	
+	# Get course path from courses list
+	course_path="$(grep -w $2 "$COURSES_FILE"	| cut -d\| -f2)"
+	trap "cd $course_path" INT
 }

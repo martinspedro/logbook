@@ -1,7 +1,7 @@
 #!/bin/bash
 
 
-journal() {
+new-journal-entry() {
 	cd $JOURNAL_PATH
 
 	# Check if there is already a directory for the current year
@@ -37,3 +37,6 @@ journal() {
 	cat /tmp/journal_entry.md >> "$daily_file".md
 }
 
+search-journal () {
+	grep -ihr --color=always "$1" $JOURNAL_PATH #| sed G 
+}

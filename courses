@@ -97,12 +97,12 @@ change-directory () {
 	if [ ! -f $COURSES_FILE ]; then
 		echo -e "${RED}ERROR!${NC} No course file found. ${LRED}Aborting.${NC}"
 		exit 1
-	elif  ! grep -w "$2" "$COURSES_FILE" ; then
+	elif  ! grep -w "$1" "$COURSES_FILE" ; then
 		echo -e "${RED}ERROR!${NC} The course is not listed in the course file. ${LRED}Aborting.${NC}"
 		exit 1
 	fi
 	
 	# Get course path from courses list
-	course_path="$(grep -w $2 "$COURSES_FILE"	| cut -d\| -f2)"
-	trap "cd $course_path" INT
+	course_path="$(grep -w "$1" "$COURSES_FILE"	| cut -d\| -f2)"
+	cd "$course_path"
 }

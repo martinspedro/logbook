@@ -38,5 +38,5 @@ new-journal-entry() {
 }
 
 search-journal () {
-	grep -ihr --color=always "$1" $JOURNAL_PATH #| sed G 
+	grep -wihr --color=always "$1" $JOURNAL_PATH #| sed G 
 }

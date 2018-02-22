@@ -51,9 +51,27 @@ if [ $# -ge 1 ] && [ $# -le 3 ]; then
 	current_path=$(pwd)
 	case $1 in
 		-j|--journal)
-			journal
+			new-journal-entry
 		;;
-		
+
+		-t|--tag)
+			if [ $# -eq 2 ]; then
+				search-journal "$2"
+			else
+				echo "USAGE: logbook -t|--tag <tag_name>"
+				exit 1
+			fi
+		;;
+
+		-q|--quote)
+			if [ $# -eq 1 ]; then
+				search-journal ">"
+			else
+				echo "USAGE: logbook -q|--quote"
+				exit 1
+			fi
+		;;
+
 		--init-course)
 			if [ $# -eq 2 ]; then
 				init-course $2
@@ -74,6 +92,16 @@ if [ $# -ge 1 ] && [ $# -le 3 ]; then
 
 		-lc|--list-courses)
 			list-courses
+		;;
+
+		-cd)
+			if [ $# -eq 2 ]; then
+				change-directory $2
+			else
+				echo "USAGE: logbook -cd <course name>"
+				exit 1
+			fi
+
 		;;
 
 		--new-doc)
@@ -102,11 +130,21 @@ if [ $# -ge 1 ] && [ $# -le 3 ]; then
 		echo -ne "Logbook v0.1
 USAGE: logbook <options> <args>\n
 options
-   -j|--journal:  Creates a new journal entry. 
-   --init-course: Initializates a new course in the current directory.
-   -c|--course:   Adds a new raw note to a previously created course unit.
-   -h|--help:     Shows this menu.\n"
+   -j|--journal:         Creates a new journal entry. 	
+	-t|--tag <tag_name>:  Fetch all journal entries by <tag_name>
+	-q|--quote:           Fetch all quotes in journal entries
+
+   --init-course:        Initializates a new course in the current directory.
+   -c|--course:          Adds a new raw note to a previously created course unit.
+   -lc|--list-courses:	 Lists all courses
+
+	--new-doc:				 Initializes a new document
+	--doc:					 Continues editing a previously initalized document
+	-ld|--list-documents: Lists all initialized documents
+
+	-h|--help:            Shows this menu.\n"
 	
+
 		;;
 
 		--default)

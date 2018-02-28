@@ -68,8 +68,10 @@ course-new-raw-note () {
 	
 	if [ $1 == "-t" ]; then
 		filename="[T]$(date +"%d-%m").md"
+		type="Theoretical"
 	elif [ "$1" == "-p" ]; then
 		filename="[P]$(date +"%d-%m").md"
+		type="Pratical"
 	fi
 
 	if [ ! -f "$filename" ]; then
@@ -79,7 +81,7 @@ course-new-raw-note () {
 	fi
 
 	git add raw/"$filename"
-	git commit -m "[RAW] Notes for class on $(date +"%d %B")"
+	git commit -m "[RAW] $type notes for class on $(date +"%d %B")"
 }
 
 list-courses () {

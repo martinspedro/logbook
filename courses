@@ -79,9 +79,17 @@ course-new-raw-note () {
 	else
 		vim raw/"$filename"
 	fi
-
+	
+	# Commit
 	git add raw/"$filename"
 	git commit -m "[RAW] $type notes for class on $(date +"%d %B")"
+	
+	# Print statistics about file
+	lines=$(wc -l raw/"$filename" | cut -d" " -f1)
+	words=$(wc -w raw/"$filename" | cut -d" " -f1)
+	characters=$(wc -c raw/"$filename" | cut -d" " -f1)
+
+	printf "\n${RED}**STATISTICS**${NC}\nLines: %s\nWords: %s\nCharacters: %s\n" "$lines" "$words" "$characters"
 }
 
 list-courses () {

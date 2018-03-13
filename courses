@@ -84,6 +84,11 @@ course-new-raw-note () {
 	git add raw/"$filename"
 	git commit -m "[RAW] $type notes for class on $(date +"%d %B")"
 	
+	# Print TODOs
+	echo -ne "\n${CYAN}**TODO**${NC} list on this note:\n"
+	grep -inw "__TODO__" raw/"$filename"
+	echo -ne "\n"
+
 	# Print statistics about file
 	lines=$(wc -l raw/"$filename" | cut -d" " -f1)
 	words=$(wc -w raw/"$filename" | cut -d" " -f1)

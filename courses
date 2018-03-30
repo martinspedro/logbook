@@ -3,6 +3,15 @@
 # functions to manage course notes
 #
 
+#-----------------------------------------------------------------------------#
+# DEFINITIONS #
+#-----------------------------------------------------------------------------#
+PUBLISH_TEMPLATE="eisvogel"
+
+
+#-----------------------------------------------------------------------------#
+# FUNCTIONS
+#-----------------------------------------------------------------------------#
 init-course () {
 	# Check if the course files exist
 	if [ ! -f $COURSES_FILE ]; then
@@ -66,12 +75,15 @@ course-new-raw-note () {
 	course_path="$(grep -w $2 "$COURSES_FILE"	| cut -d\| -f2)"
 	cd "$course_path"
 	
-	if [ $1 == "-t" ]; then
+	if [ $1 == "-t" ]; then				# Theoretical
 		filename="[T]$(date +"%d-%m").md"
 		type="Theoretical"
-	elif [ "$1" == "-p" ]; then
+	elif [ "$1" == "-p" ]; then		# Pratical
 		filename="[P]$(date +"%d-%m").md"
-		type="Pratical"
+		type="Pratical"					
+	elif [ "$1" == "-o" ]; then		# Ordinary notes
+		filename="[O]$(date +"%d-%m").md"
+		type="Ordinary Notes"
 	fi
 
 	if [ ! -f "$filename" ]; then
@@ -120,4 +132,14 @@ change-directory () {
 	# Get course path from courses list
 	course_path="$(grep -w "$1" "$COURSES_FILE"	| cut -d\| -f2)"
 	cd "$course_path"
+}
+
+publish () {
+	filename=$(basename "$1" .md)
+
+	if [ -f metadata/"$filename.yaml" ]; then
+			pandoc "metadata/$filename.yaml" "$1" -o "pdf/$filename.pdf" --latex-engine=xelatex --template=PUBLISH_TEMPLATE --toc --listings --highlight-style=tango -N
+	else
+		pandoc "$1" -o "pdf/$filename.pdf" --latex-engine=xelatex --template=PUBLISH_TEMPLATE --toc --listings --highlight-style=tango -N
+	fi
 }

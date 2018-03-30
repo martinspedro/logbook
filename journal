@@ -22,7 +22,7 @@ new-journal-entry() {
 
 	# Manage daily files
 	daily_file=$(date +"%d-%b-%Y")
-	entry=$(date +"%A, %M  %B of %Y")
+	entry=$(date +"%A, %d  %B of %Y")
 	if [ ! -f "${daily_file}.md" ]; then
 		echo -ne "# $entry\n\n" > "${daily_file}.md"
 	fi

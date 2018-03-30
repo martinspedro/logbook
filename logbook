@@ -123,7 +123,7 @@ if [ $# -ge 1 ] && [ $# -le 3 ]; then
 
 		-p|--publish)
 			if [ $# -eq 2 ]; then
-				course-new-raw-note $2 
+				publish $2 
 			else
 				echo "USAGE: logbook -p|--publish <note filename>"
 				exit 1

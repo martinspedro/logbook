@@ -139,8 +139,8 @@ publish () {
 	filename=$(basename "$1" .md)
 
 	if [ -f metadata/"$filename.yaml" ]; then
-			pandoc "metadata/$filename.yaml" "$1" -o "pdf/$filename.pdf" --latex-engine=xelatex --template=PUBLISH_TEMPLATE --toc --listings --highlight-style=tango -N
+			pandoc "metadata/$filename.yaml" "$1" -o "pdf/$filename.pdf" --latex-engine=xelatex --template=$PUBLISH_TEMPLATE --toc --listings --highlight-style=tango -N
 	else
-		pandoc "$1" -o "pdf/$filename.pdf" --latex-engine=xelatex --template=PUBLISH_TEMPLATE --toc --listings --highlight-style=tango -N
+		pandoc "$1" -o "pdf/$filename.pdf" --latex-engine=xelatex --template=$PUBLISH_TEMPLATE --toc --listings --highlight-style=tango -N
 	fi
 }

@@ -132,6 +132,7 @@ change-directory () {
 	# Get course path from courses list
 	course_path="$(grep -w "$1" "$COURSES_FILE"	| cut -d\| -f2)"
 	cd "$course_path"
+	exec bash
 }
 
 publish () {

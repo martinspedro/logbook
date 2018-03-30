@@ -2,6 +2,7 @@
 #
 #
 
+
 # Exit script if an undefined variable is used and when a command exits with a non-zero status
 set -u -e 
 set -o pipefail 	
@@ -42,6 +43,30 @@ DOC_PATH=$LOGBOOK_PATH/documents
 source journal
 source courses
 source documents
+
+#-----------------------------------------------------------------------------#
+# HELP MESSAGE #
+#-----------------------------------------------------------------------------#
+help-message () {
+		echo -ne "Logbook v0.1
+USAGE: logbook <options> <args>\n
+options
+   -j|--journal:         Creates a new journal entry. 	
+      -t|--tag <tag_name>:  Fetch all journal entries by <tag_name>
+      -q|--quote:           Fetch all quotes in journal entries
+
+   --init-course:        Initializates a new course in the current directory.
+   -c|--course:          Adds a new raw note to a previously created course unit.
+   -lc|--list-courses:	 Lists all courses
+
+   --new-doc:            Initializes a new document ${RED} DEPRECATED${NC} Use --doc instead
+   --doc:                Creates and/or edits an document
+   -s|--symbolic-link:   Creates a symbolic link in the current directory to a document
+   -ld|--list-documents: Lists all created documents
+
+   -h|--help:            Shows this menu.\n"
+	
+}
 
 #-----------------------------------------------------------------------------#
 # SCRIPT AREA #
@@ -122,28 +147,21 @@ if [ $# -ge 1 ] && [ $# -le 3 ]; then
 			fi
 		;;
 
+		-s|--symbolic-link)
+			if [ $# -eq 2 ]; then
+				create-sym $2
+			else
+				echo "USAGE: logbook -s|--symbolic-link <existent document name>"
+				exit 1
+			fi
+		;;
+		
 		-ld|--list-docs)
 			list-docs
 		;;
 
 		-h|--help)
-		echo -ne "Logbook v0.1
-USAGE: logbook <options> <args>\n
-options
-   -j|--journal:         Creates a new journal entry. 	
-	-t|--tag <tag_name>:  Fetch all journal entries by <tag_name>
-	-q|--quote:           Fetch all quotes in journal entries
-
-   --init-course:        Initializates a new course in the current directory.
-   -c|--course:          Adds a new raw note to a previously created course unit.
-   -lc|--list-courses:	 Lists all courses
-
-	--new-doc:				 Initializes a new document
-	--doc:					 Continues editing a previously initalized document
-	-ld|--list-documents: Lists all initialized documents
-
-	-h|--help:            Shows this menu.\n"
-	
+			help-message
 
 		;;
 
@@ -161,8 +179,9 @@ options
 	# Return to original path
 	cd "$current_path"
 else
-	echo "ERROR. No argumenst provided"
+	help-message
 	exit 1
 fi
+
 
 

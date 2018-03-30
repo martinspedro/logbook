@@ -1,8 +1,11 @@
 #!/bin/bash
+#
+# Manage and create new documents 
+#
 
-
+# deprecated
 new-doc () {
-	# Check if the Document files exist
+	# Create a document folder if it doesn't exist
 	if [ ! -d $DOC_PATH ]; then
 		mkdir $DOC_PATH
 	fi
@@ -17,31 +20,74 @@ new-doc () {
 }
 
 open-doc () {
-	# Check if the Document Path exist
+	# Check if the document path exists
 	if [ ! -d $DOC_PATH ]; then
-		echo "ERROR. The document path does not exist. Aborting."
-		exit 1
+		choice=""
+		while [ $choice != "y" ] && [ $choice != "n" ] ; do 
+			echo "The document path does not exist. Create? (y/n)\n "
+			read choice
+		done
+
+		# Abort if the user does not want to create the path
+		if [ "$choice" == "n" ]; then
+			echo "ERROR. The document path does not exist. Aborting."
+			exit 1		
+		else
+			mkdir $DOC_PATH
+		fi	
+
 	fi
 	
-	if [ -f $DOC_PATH/$1.md ]; then
-		cd $DOC_PATH	
-		vim "$1.md"
-	else
-		echo "ERROR. Document already exists. Aborting."
-		exit 1
+	# Check if the document file exists. If not, query the user
+	if [ ! -f $DOC_PATH/$1.md ]; then
+		choice=""
+		while [ "$choice" != "y" ] && [ "$choice" != "n" ] ; do 
+			echo -ne "The document file does not exist. Create? (y/n): " 
+			read choice
+		done
+
+		# Abort if the user does not want to create a new doc
+		if [ "$choice" == "n" ]; then
+			echo "Document NOT created. Aborting."
+			exit 1
+		fi
 	fi
+	
+
+	# Edit document
+	cd $DOC_PATH	
+	vim "$1.md"
+
 }
 
 list-docs () {
-	# Check if the Document Path exist
+	# Check if the document path exist
 	if [ ! -d $DOC_PATH ]; then
 		echo "ERROR. The document path does not exist. Aborting."
 		exit 1
 	fi
 	
+	# List the documents and their first 3 lines
 	cd $DOC_PATH
 	documents=( $(ls *.md) )
 	for i in ${!documents[*]}; do
 		echo -ne "> ${documents[$i]}\n${CYAN}$(head -3 ${documents[$i]}) ${NC}\n\n" 
 	done
+}
+
+create-sym () {
+	# Check if the document path exist
+	if [ ! -d $DOC_PATH ]; then
+		echo "ERROR. The document path does not exist. Aborting."
+		exit 1
+	fi
+	
+	# Check if the document file exists. If not, query the user
+	if [ ! -f $DOC_PATH/$1.md ]; then
+		echo "${RED}ERROR${NC}. The document does not exist! ${ORANGE}Aborting${NC}."
+		exit 1
+	fi
+
+	# Create a symlink in current directory to document
+	ln -s "$DOC_PATH/$1.md" "$1"
 }

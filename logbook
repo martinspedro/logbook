@@ -54,6 +54,7 @@ options
    -j|--journal:         Creates a new journal entry. 	
    -t|--tag <tag_name>:  Fetch all journal entries by <tag_name>
    -q|--quote:           Fetch all quotes in journal entries
+   -b|--browse-journal:  Browse through journal entries
 
    --init-course:        Initializates a new course in the current directory.
    -c|--course:          Adds a new raw note to a previously created course unit.
@@ -96,6 +97,10 @@ if [ $# -ge 1 ] && [ $# -le 3 ]; then
 				echo "USAGE: logbook -q|--quote"
 				exit 1
 			fi
+		;;
+
+		-b|--browse-journal)
+			browse-entries
 		;;
 
 		--init-course)

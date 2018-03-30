@@ -40,3 +40,7 @@ new-journal-entry() {
 search-journal () {
 	grep -wihr --color=always "$1" $JOURNAL_PATH #| sed G 
 }
+
+browse-entries () {
+	vim -c "NERDTree $JOURNAL_PATH"
+}
